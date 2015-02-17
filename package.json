@@ -1,6 +1,6 @@
 {
   "name": "gyt",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,8 @@
     "gyt": "index.js"
   },
   "dependencies": {
-    "raptor-args": "^0.1.14-beta"
+    "raptor-args": "^0.1.14-beta",
+    "rest": "1.3.0",
+    "underscore": "1.7.0"
   }
 }

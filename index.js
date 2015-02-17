@@ -24,6 +24,10 @@ var commands = {
         cfg.password = args.password;
       }
 
+      if(args.org) {
+        cfg.org = args.org;
+      }
+
       config.save(cfg, function(err) {
         if(err) {
           console.error(err);
@@ -31,6 +35,20 @@ var commands = {
           console.log("Configuration updated");
         }
       });
+    }
+  },
+  "listrepos": {
+    description: "List repositories",
+    action: function(args) {
+      if(args.username) {
+        cfg.username = args.username;
+      }
+
+      if(args.org) {
+        cfg.org = args.org;
+      }
+
+      require("./api/listrepos")(cfg);
     }
   }
 };
@@ -57,6 +75,10 @@ var args = require("raptor-args").createParser({
   "--password -p": {
     type: "string",
     description: "GitHub password"
+  },
+  "--org -o": {
+    type: "string",
+    description: "GitHub organisation"
   }
 }).validate(function(result) {
   if (result.help) {
