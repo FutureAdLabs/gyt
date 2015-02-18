@@ -9,11 +9,20 @@ module.exports = function(cfg) {
     return;
   }
 
+  var boxWidth = 150;
+  var topAndBottom = "";
+  var line = "";
+
+  _.times(boxWidth, function() {
+    topAndBottom += "-";
+  });
+
   repositories.get(cfg, function(err, repos) {
     if(err) {
       console.error(err);
       return;
     }
+    console.log();
 
     _.each(repos, function(repo) {
       var url = "api.github.com/repos/" + cfg.org + "/" + repo.name + "/issues?labels=icebox";
@@ -22,18 +31,42 @@ module.exports = function(cfg) {
       rest(req).then(function(response) {
         var res = JSON.parse(response.entity);
         if(res.length) {
-          console.log("----------------------------------------------------------------------------------------------------");
-          console.log(repo.name);
-          _.each(res, function(issue) {
-            console.log();
-            console.log("Number: " + issue.number);
-            console.log(issue.title);
-            console.log("State: " + issue.state);
-            _.each(issue.labels, function(label) {
-              console.log("- " + label.name);
-            });
+          console.log(topAndBottom);
+          line = "| " + repo.name;
+          _.times(boxWidth - line.length - 1, function() {
+            line += " ";
           });
-          console.log("----------------------------------------------------------------------------------------------------");
+          line += "|";
+          console.log(line);
+          console.log(topAndBottom);
+
+          _.each(res, function(issue) {
+            line = "| " + issue.number;
+
+            _.times(10 - line.length - 1, function() {
+              line += " ";
+            });
+
+            line += issue.title;
+
+            _.times(90 - line.length - 1, function() {
+              line += " ";
+            });
+
+            _.each(issue.labels, function(label) {
+              line += label.name + " ";
+            });
+
+            _.times(boxWidth - line.length - 1, function() {
+              line += " ";
+            });
+
+            line += "|";
+
+            console.log(line);
+          });
+          console.log(topAndBottom);
+          console.log();
         }
       });
     });
