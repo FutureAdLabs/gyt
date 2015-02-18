@@ -48,11 +48,175 @@ var commands = {
         cfg.username = args.username;
       }
 
+      if(args.password) {
+        cfg.password = args.password;
+      }
+
+      if(args.token) {
+        cfg.token = args.token;
+      }
+
       if(args.org) {
         cfg.org = args.org;
       }
 
-      require("./api/listrepos")(cfg);
+      require("./api/repos").list(cfg);
+    }
+  },
+  "listissues": {
+    description: "List issues",
+    action: function(args) {
+      if(args.username) {
+        cfg.username = args.username;
+      }
+
+      if(args.password) {
+        cfg.password = args.password;
+      }
+
+      if(args.token) {
+        cfg.token = args.token;
+      }
+
+      if(args.org) {
+        cfg.org = args.org;
+      }
+
+      if(args.repo) {
+        cfg.repo = args.repo;
+      }
+
+      require("./api/listissues")(cfg);
+    }
+  },
+  "icebox": {
+    description: "List icebox issues",
+    action: function(args) {
+      if(args.username) {
+        cfg.username = args.username;
+      }
+
+      if(args.password) {
+        cfg.password = args.password;
+      }
+
+      if(args.token) {
+        cfg.token = args.token;
+      }
+
+      if(args.org) {
+        cfg.org = args.org;
+      }
+
+      if(args.repo) {
+        cfg.repo = args.repo;
+      }
+
+      require("./api/listicebox")(cfg);
+    }
+  },
+  "backlog": {
+    description: "List backlog issues",
+    action: function(args) {
+      if(args.username) {
+        cfg.username = args.username;
+      }
+
+      if(args.password) {
+        cfg.password = args.password;
+      }
+
+      if(args.token) {
+        cfg.token = args.token;
+      }
+
+      if(args.org) {
+        cfg.org = args.org;
+      }
+
+      if(args.repo) {
+        cfg.repo = args.repo;
+      }
+
+      require("./api/listbacklog")(cfg);
+    }
+  },
+  "ready": {
+    description: "List ready issues",
+    action: function(args) {
+      if(args.username) {
+        cfg.username = args.username;
+      }
+
+      if(args.password) {
+        cfg.password = args.password;
+      }
+
+      if(args.token) {
+        cfg.token = args.token;
+      }
+
+      if(args.org) {
+        cfg.org = args.org;
+      }
+
+      if(args.repo) {
+        cfg.repo = args.repo;
+      }
+
+      require("./api/listready")(cfg);
+    }
+  },
+  "inprogress": {
+    description: "List in progress issues",
+    action: function(args) {
+      if(args.username) {
+        cfg.username = args.username;
+      }
+
+      if(args.password) {
+        cfg.password = args.password;
+      }
+
+      if(args.token) {
+        cfg.token = args.token;
+      }
+
+      if(args.org) {
+        cfg.org = args.org;
+      }
+
+      if(args.repo) {
+        cfg.repo = args.repo;
+      }
+
+      require("./api/listinprogress")(cfg);
+    }
+  },
+  "done": {
+    description: "List completed issues",
+    action: function(args) {
+      if(args.username) {
+        cfg.username = args.username;
+      }
+
+      if(args.password) {
+        cfg.password = args.password;
+      }
+
+      if(args.token) {
+        cfg.token = args.token;
+      }
+
+      if(args.org) {
+        cfg.org = args.org;
+      }
+
+      if(args.repo) {
+        cfg.repo = args.repo;
+      }
+
+      require("./api/listdone")(cfg);
     }
   }
 };
@@ -87,6 +251,10 @@ var args = require("raptor-args").createParser({
   "--org -o": {
     type: "string",
     description: "GitHub organisation"
+  },
+  "--repo -r": {
+    type: "string",
+    description: "GitHub repository"
   }
 }).validate(function(result) {
   if (result.help) {
