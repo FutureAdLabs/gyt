@@ -28,6 +28,10 @@ var commands = {
         cfg.org = args.org;
       }
 
+      if(args.token) {
+        cfg.token = args.token;
+      }
+
       config.save(cfg, function(err) {
         if(err) {
           console.error(err);
@@ -75,6 +79,10 @@ var args = require("raptor-args").createParser({
   "--password -p": {
     type: "string",
     description: "GitHub password"
+  },
+  "--token -t": {
+    type: "string",
+    description: "GitHub OAuth token"
   },
   "--org -o": {
     type: "string",
