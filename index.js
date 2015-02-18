@@ -86,6 +86,10 @@ var commands = {
         cfg.repo = args.repo;
       }
 
+      if(args.label) {
+        cfg.label = args.label;
+      }
+
       require("./api/listissues")(cfg);
     }
   },
@@ -255,6 +259,10 @@ var args = require("raptor-args").createParser({
   "--repo -r": {
     type: "string",
     description: "GitHub repository"
+  },
+  "--label -l": {
+    type: "string",
+    description: "GitHub issue label"
   }
 }).validate(function(result) {
   if (result.help) {

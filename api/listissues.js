@@ -1,6 +1,7 @@
 var rest = require("rest");
 var _ = require("underscore");
 var request = require("./request");
+var repositories = require("./repos");
 
 module.exports = function(cfg) {
   if(!cfg || !cfg.org) {
@@ -8,51 +9,94 @@ module.exports = function(cfg) {
     return;
   }
 
-  if(!cfg || !cfg.repo) {
-    console.log("Please provide a repository");
-    return;
+  var repofilters = [];
+  if(cfg && cfg.repo) {
+    repofilters = cfg.repo.split(",");
   }
 
-  var url = "api.github.com/repos/" + cfg.org + "/" + cfg.repo + "/issues?state=all";
-  var req = request.get(cfg, url);
+  var labelfilters = [];
+  if(cfg && cfg.label) {
+    labelfilters = cfg.label.split(",");
+  }
+
   var boxWidth = 150;
   var topAndBottom = "";
+  var line = "";
+
+  var orgTotals = {
+    total: 0,
+    icebox: 0,
+    backlog: 0,
+    ready: 0,
+    inprogress: 0,
+    done: 0
+  };
 
   _.times(boxWidth, function() {
     topAndBottom += "-";
   });
 
-  rest(req).then(function(response) {
+  repositories.get(cfg, function(err, repos) {
+    if(err) {
+      console.error(err);
+      return;
+    }
+    console.log();
 
-    var res = JSON.parse(response.entity);
-    console.log(topAndBottom);
-    _.each(res, function(issue) {
-      var line = "| " + issue.number;
-      var space = 10 - line.length;
+    _.each(repos, function(repo) {
+      if(!repofilters.length || _.contains(repofilters, repo.name)) {
+        var url = "api.github.com/repos/" + cfg.org + "/" + repo.name + "/issues?state=all";
+        var req = request.get(cfg, url);
 
-      _.times(space, function() {
-        line  += " ";
-      });
+        rest(req).then(function(response) {
+          var res = JSON.parse(response.entity);
+          if(res.length) {
+            console.log(topAndBottom);
+            line = "| " + repo.name;
+            _.times(boxWidth - line.length - 1, function() {
+              line += " ";
+            });
+            line += "|";
+            console.log(line);
+            console.log(topAndBottom);
 
-      line += issue.title;
+            _.each(res, function(issue) {
+              var labelNames = _.map(issue.labels, function(l) {
+                return l.name.toLowerCase().replace(" ", "");
+              });
+              if(!labelfilters.length || _.some(labelfilters, function(filter) {
+                return _.contains(labelNames, filter);
+              })) {
+                line = "| " + issue.number;
 
-      _.times(90 - line.length - 1, function() {
-        line += " ";
-      });
+                _.times(10 - line.length - 1, function() {
+                  line += " ";
+                });
 
-      _.each(issue.labels, function(label) {
-        line += label.name + " ";
-      });
+                line += issue.title;
 
-      space = boxWidth - line.length - 1;
+                _.times(90 - line.length - 1, function() {
+                  line += " ";
+                });
 
-      _.times(space, function() {
-        line  += " ";
-      });
+                _.each(issue.labels, function(label) {
+                  line += label.name + " ";
+                });
 
-      line += "|";
-      console.log(line);
+                _.times(boxWidth - line.length - 1, function() {
+                  line += " ";
+                });
+
+                line += "|";
+
+                console.log(line);
+              }
+            });
+            console.log(topAndBottom);
+            console.log();
+          }
+        });
+      }
     });
-    console.log(topAndBottom);
   });
 };
