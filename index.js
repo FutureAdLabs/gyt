@@ -6,6 +6,12 @@ var fs = require("fs");
 var config = require("./config");
 var cfg = config.load();
 
+function updateConfig(args, cfg) {
+  for(var item in args) {
+    cfg[item] = args[item];
+  }
+}
+
 var commands = {
   "config": {
     description: "Display configuration",
@@ -16,21 +22,7 @@ var commands = {
   "set": {
     description: "Set config value",
     action: function(args) {
-      if(args.username) {
-        cfg.username = args.username;
-      }
-
-      if(args.password) {
-        cfg.password = args.password;
-      }
-
-      if(args.org) {
-        cfg.org = args.org;
-      }
-
-      if(args.token) {
-        cfg.token = args.token;
-      }
+      updateConfig(args, cfg);
 
       config.save(cfg, function(err) {
         if(err) {
@@ -44,21 +36,7 @@ var commands = {
   "listrepos": {
     description: "List repositories",
     action: function(args) {
-      if(args.username) {
-        cfg.username = args.username;
-      }
-
-      if(args.password) {
-        cfg.password = args.password;
-      }
-
-      if(args.token) {
-        cfg.token = args.token;
-      }
-
-      if(args.org) {
-        cfg.org = args.org;
-      }
+      updateConfig(args, cfg);
 
       require("./api/repos").list(cfg);
     }
@@ -66,29 +44,7 @@ var commands = {
   "listissues": {
     description: "List issues",
     action: function(args) {
-      if(args.username) {
-        cfg.username = args.username;
-      }
-
-      if(args.password) {
-        cfg.password = args.password;
-      }
-
-      if(args.token) {
-        cfg.token = args.token;
-      }
-
-      if(args.org) {
-        cfg.org = args.org;
-      }
-
-      if(args.repo) {
-        cfg.repo = args.repo;
-      }
-
-      if(args.label) {
-        cfg.label = args.label;
-      }
+      updateConfig(args, cfg);
 
       require("./api/listissues")(cfg);
     }
@@ -96,25 +52,7 @@ var commands = {
   "icebox": {
     description: "List icebox issues",
     action: function(args) {
-      if(args.username) {
-        cfg.username = args.username;
-      }
-
-      if(args.password) {
-        cfg.password = args.password;
-      }
-
-      if(args.token) {
-        cfg.token = args.token;
-      }
-
-      if(args.org) {
-        cfg.org = args.org;
-      }
-
-      if(args.repo) {
-        cfg.repo = args.repo;
-      }
+      updateConfig(args, cfg);
 
       require("./api/listicebox")(cfg);
     }
@@ -122,25 +60,7 @@ var commands = {
   "backlog": {
     description: "List backlog issues",
     action: function(args) {
-      if(args.username) {
-        cfg.username = args.username;
-      }
-
-      if(args.password) {
-        cfg.password = args.password;
-      }
-
-      if(args.token) {
-        cfg.token = args.token;
-      }
-
-      if(args.org) {
-        cfg.org = args.org;
-      }
-
-      if(args.repo) {
-        cfg.repo = args.repo;
-      }
+      updateConfig(args, cfg);
 
       require("./api/listbacklog")(cfg);
     }
@@ -148,25 +68,7 @@ var commands = {
   "ready": {
     description: "List ready issues",
     action: function(args) {
-      if(args.username) {
-        cfg.username = args.username;
-      }
-
-      if(args.password) {
-        cfg.password = args.password;
-      }
-
-      if(args.token) {
-        cfg.token = args.token;
-      }
-
-      if(args.org) {
-        cfg.org = args.org;
-      }
-
-      if(args.repo) {
-        cfg.repo = args.repo;
-      }
+      updateConfig(args, cfg);
 
       require("./api/listready")(cfg);
     }
@@ -174,25 +76,7 @@ var commands = {
   "inprogress": {
     description: "List in progress issues",
     action: function(args) {
-      if(args.username) {
-        cfg.username = args.username;
-      }
-
-      if(args.password) {
-        cfg.password = args.password;
-      }
-
-      if(args.token) {
-        cfg.token = args.token;
-      }
-
-      if(args.org) {
-        cfg.org = args.org;
-      }
-
-      if(args.repo) {
-        cfg.repo = args.repo;
-      }
+      updateConfig(args, cfg);
 
       require("./api/listinprogress")(cfg);
     }
@@ -200,25 +84,7 @@ var commands = {
   "done": {
     description: "List completed issues",
     action: function(args) {
-      if(args.username) {
-        cfg.username = args.username;
-      }
-
-      if(args.password) {
-        cfg.password = args.password;
-      }
-
-      if(args.token) {
-        cfg.token = args.token;
-      }
-
-      if(args.org) {
-        cfg.org = args.org;
-      }
-
-      if(args.repo) {
-        cfg.repo = args.repo;
-      }
+      updateConfig(args, cfg);
 
       require("./api/listdone")(cfg);
     }
@@ -263,6 +129,10 @@ var args = require("raptor-args").createParser({
   "--label -l": {
     type: "string",
     description: "GitHub issue label"
+  },
+  "--number -n": {
+    type: "number",
+    description: "GitHub issue number"
   }
 }).validate(function(result) {
   if (result.help) {

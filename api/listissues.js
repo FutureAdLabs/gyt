@@ -27,7 +27,7 @@ function getIssues(cfg, repofilters, labelfilters, callback) {
         };
         issues.repos.push(repoData);
 
-        var url = "api.github.com/repos/" + cfg.org + "/" + repo.name + "/issues?state=all";
+        var url = "api.github.com/repos/" + cfg.org + "/" + repo.name + "/issues?state=all&&per_page=100";
         var req = request.get(cfg, url);
 
         rest(req).then(function(response) {
@@ -36,6 +36,18 @@ function getIssues(cfg, repofilters, labelfilters, callback) {
             var labelNames = _.map(issue.labels, function(l) {
               return l.name.toLowerCase().replace(" ", "");
             });
+
+            if(!_.some(_.pluck(issue.labels, "name"), function(l) {
+              return _.contains(["Icebox", "ready", "in progress"], l);
+            })) {
+              if(issue.state === "closed") {
+                labelNames.push("done");
+                issue.labels.push({name: "done"});
+              } else {
+                labelNames.push("backlog");
+                issue.labels.push({name: "backlog"});
+              }
+            }
 
             if(!labelfilters.length || _.some(labelfilters, function(filter) {
               return _.contains(labelNames, filter);
