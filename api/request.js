@@ -1,15 +1,22 @@
-module.exports.get = function(cfg, url) {
-  if(cfg.token) {
-    url = "https://" + url;
+module.exports.get = function(cfg, properties) {
+  var req = {};
+
+  if (typeof properties === 'string') {
+    req = {
+      path: properties
+    };
   } else {
-    url = "https://" + cfg.username + ":" + cfg.password + "@" + url;
+    req = properties;
   }
 
-  var req = {
-    "path": url,
-    headers: {
-      "User-Agent":"Adludio Gyt"
-    }
+  if(cfg.token) {
+    req.path = "https://" + req.path;
+  } else {
+    req.path = "https://" + cfg.username + ":" + cfg.password + "@" + req.path;
+  }
+
+  req.headers = {
+    "User-Agent":"Adludio Gyt"
   };
 
   if(cfg.token) {

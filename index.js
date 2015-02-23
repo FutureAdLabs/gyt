@@ -49,7 +49,15 @@ var commands = {
       require("./api/listissues")(cfg);
     }
   },
-  "icebox": {
+  "setpoints": {
+    description: "Set points estimate for an issue",
+    action: function(args) {
+      updateConfig(args, cfg);
+
+      require("./api/points")(cfg);
+    }
+  }
+/*  "icebox": {
     description: "List icebox issues",
     action: function(args) {
       updateConfig(args, cfg);
@@ -88,7 +96,7 @@ var commands = {
 
       require("./api/listdone")(cfg);
     }
-  }
+  }*/
 };
 
 function printCommands() {
@@ -110,7 +118,7 @@ var args = require("raptor-args").createParser({
     type: "string",
     description: "GitHub username"
   },
-  "--password -p": {
+  "--password -pw": {
     type: "string",
     description: "GitHub password"
   },
@@ -133,6 +141,10 @@ var args = require("raptor-args").createParser({
   "--number -n": {
     type: "number",
     description: "GitHub issue number"
+  },
+  "--points -p": {
+    type: "number",
+    description: "Github issue points estimation"
   }
 }).validate(function(result) {
   if (result.help) {
