@@ -4,6 +4,7 @@ var async = require("async");
 var asciitable = require("ascii-table");
 var request = require("./request");
 var repositories = require("./repos");
+var util = require("./util");
 
 function getIssues(cfg, repofilters, labelfilters, callback) {
   var issues = {
@@ -22,7 +23,8 @@ function getIssues(cfg, repofilters, labelfilters, callback) {
           name: repo.name,
           issues: [],
           totals: {
-            total: 0
+            total: 0,
+            points: 0
           }
         };
         issues.repos.push(repoData);
@@ -55,9 +57,12 @@ function getIssues(cfg, repofilters, labelfilters, callback) {
 
               repoData.issues.push({
                 number: issue.number,
-                title: issue.title,
-                labels: _.pluck(issue.labels, "name")
+                title: util.getNakedTitle(issue.title),
+                labels: _.pluck(issue.labels, "name"),
+                points: util.getCurrentPoints(issue.title)
               });
+
+              repoData.totals.points += util.getCurrentPoints(issue.title);
 
               _.each(labelfilters, function(filter) {
                 if(_.contains(labelNames, filter)) {
@@ -112,7 +117,7 @@ function render(issues) {
     var repoTable = new asciitable(repo.name);
 
     _.each(repo.issues, function(i) {
-      repoTable.addRow(i.number, i.title, i.labels.join(","));
+      repoTable.addRow(i.number, i.title, i.labels.join(","), i.points);
     });
 
     console.log();
