@@ -21,7 +21,9 @@ function getMilestones(cfg, callback) {
 
         res = JSON.parse(response.entity);
         if(res.length && !res.message) {
-          milestones.push(res[0].title);
+          _.each(res, function(milestone) {
+            milestones.push(milestone.title);
+          });
         }
         repoCallback();
       });

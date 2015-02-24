@@ -35,7 +35,6 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
         rest(req).then(function(response) {
           var res = JSON.parse(response.entity);
           async.each(res, function(issue, issueCallback) {
-
             var labelNames = _.map(issue.labels, function(l) {
               return l.name.toLowerCase().replace(" ", "");
             });
@@ -54,7 +53,8 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
 
             if((!labelfilters.length || _.some(labelfilters, function(filter) {
               return _.contains(labelNames, filter);
-            })) && (!milestoneFiters.length || (issue.milestone && _.contains(milestoneFiters, issue.milestone.title.toLowerCase())))) {
+            })) && (!milestoneFiters.length || (issue.milestone && _.contains(milestoneFiters, issue.milestone.title.toLowerCase()))
+                   )  && (!cfg.state || cfg.state === issue.state)) {
 
               var milestone = "";
               if(issue.milestone) {

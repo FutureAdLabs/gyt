@@ -112,11 +112,15 @@ var args = require("raptor-args").createParser({
   },
   "--points -p": {
     type: "number",
-    description: "Github issue points estimation"
+    description: "GitHub issue points estimation"
   },
   "--milestone -m": {
     type: "string",
-    description: "Github issues milestone"
+    description: "GitHub issues milestone"
+  },
+  "--state": {
+    type: "string",
+    description: "GitHub issues state"
   }
 }).validate(function(result) {
   if (result.help) {
