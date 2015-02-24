@@ -56,47 +56,15 @@ var commands = {
 
       require("./api/points")(cfg);
     }
+  },
+  "listmilestones": {
+    description: "List milestones",
+    action: function(args) {
+      updateConfig(args, cfg);
+
+      require("./api/listmilestones")(cfg);
+    }
   }
-/*  "icebox": {
-    description: "List icebox issues",
-    action: function(args) {
-      updateConfig(args, cfg);
-
-      require("./api/listicebox")(cfg);
-    }
-  },
-  "backlog": {
-    description: "List backlog issues",
-    action: function(args) {
-      updateConfig(args, cfg);
-
-      require("./api/listbacklog")(cfg);
-    }
-  },
-  "ready": {
-    description: "List ready issues",
-    action: function(args) {
-      updateConfig(args, cfg);
-
-      require("./api/listready")(cfg);
-    }
-  },
-  "inprogress": {
-    description: "List in progress issues",
-    action: function(args) {
-      updateConfig(args, cfg);
-
-      require("./api/listinprogress")(cfg);
-    }
-  },
-  "done": {
-    description: "List completed issues",
-    action: function(args) {
-      updateConfig(args, cfg);
-
-      require("./api/listdone")(cfg);
-    }
-  }*/
 };
 
 function printCommands() {
@@ -145,6 +113,10 @@ var args = require("raptor-args").createParser({
   "--points -p": {
     type: "number",
     description: "Github issue points estimation"
+  },
+  "--milestone -m": {
+    type: "string",
+    description: "Github issues milestone"
   }
 }).validate(function(result) {
   if (result.help) {

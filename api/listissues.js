@@ -6,7 +6,7 @@ var request = require("./request");
 var repositories = require("./repos");
 var util = require("./util");
 
-function getIssues(cfg, repofilters, labelfilters, callback) {
+function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
   var issues = {
     repos: [],
     totals: {}
@@ -35,6 +35,7 @@ function getIssues(cfg, repofilters, labelfilters, callback) {
         rest(req).then(function(response) {
           var res = JSON.parse(response.entity);
           async.each(res, function(issue, issueCallback) {
+
             var labelNames = _.map(issue.labels, function(l) {
               return l.name.toLowerCase().replace(" ", "");
             });
@@ -51,14 +52,20 @@ function getIssues(cfg, repofilters, labelfilters, callback) {
               }
             }
 
-            if(!labelfilters.length || _.some(labelfilters, function(filter) {
+            if((!labelfilters.length || _.some(labelfilters, function(filter) {
               return _.contains(labelNames, filter);
-            })) {
+            })) && (!milestoneFiters.length || (issue.milestone && _.contains(milestoneFiters, issue.milestone.title.toLowerCase())))) {
+
+              var milestone = "";
+              if(issue.milestone) {
+                milestone = issue.milestone.title;
+              }
 
               repoData.issues.push({
                 number: issue.number,
                 title: util.getNakedTitle(issue.title),
                 labels: _.pluck(issue.labels, "name"),
+                milestone: milestone,
                 points: util.getCurrentPoints(issue.title)
               });
 
@@ -115,9 +122,10 @@ function render(issues) {
     }
 
     var repoTable = new asciitable(repo.name);
+    repoTable.setHeading("Number", "Title", "Labels", "milestone", "Points");
 
     _.each(repo.issues, function(i) {
-      repoTable.addRow(i.number, i.title, i.labels.join(","), i.points);
+      repoTable.addRow(i.number, i.title, i.labels.join(","), i.milestone, i.points);
     });
 
     console.log();
@@ -161,7 +169,12 @@ module.exports = function(cfg) {
     labelfilters = cfg.label.split(",");
   }
 
-  getIssues(cfg, repofilters, labelfilters, function(err, issues) {
+  var milestoneFiters = [];
+  if(cfg && cfg.milestone) {
+    milestoneFiters = cfg.milestone.toLowerCase().split(",");
+  }
+
+  getIssues(cfg, repofilters, labelfilters, milestoneFiters, function(err, issues) {
     render(issues);
   });
 };
