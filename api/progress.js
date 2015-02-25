@@ -20,7 +20,7 @@ function updateTitle(cfg, issue, title) {
 
 module.exports = function(cfg) {
   if(!cfg || !cfg.points) {
-    console.log("Please provide the points estimate");
+    console.log("Please provide a points progress");
     return;
   }
 
@@ -31,8 +31,8 @@ module.exports = function(cfg) {
       return;
     }
 
-    var progress = util.getCurrentProgress(issue.title);
-    var title = "[" + progress + "/" + cfg.points + "] " + util.getNakedTitle(issue.title);
+    var estimation = util.getCurrentPoints(issue.title);
+    var title = "[" + cfg.points + "/" + estimation + "] " + util.getNakedTitle(issue.title);
     updateTitle(cfg, issue, title);
   });
 };

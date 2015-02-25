@@ -34,3 +34,19 @@ module.exports.getCurrentPoints = function(title) {
   }
   return points;
 };
+
+module.exports.getCurrentProgress = function(title) {
+
+  if(getPointsSectionIndex(title) < 0) {
+    return 0;
+  }
+
+  var slashIndex = title.indexOf("/");
+  var openIndex = title.indexOf("[");
+  var pointsStr = title.substring(openIndex + 1, slashIndex);
+  var points = parseInt(pointsStr);
+  if(!points) {
+    points = 0;
+  }
+  return points;
+};

@@ -24,7 +24,8 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
           issues: [],
           totals: {
             total: 0,
-            points: 0
+            points: 0,
+            progress: 0
           }
         };
         issues.repos.push(repoData);
@@ -66,10 +67,12 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
                 title: util.getNakedTitle(issue.title),
                 labels: _.pluck(issue.labels, "name"),
                 milestone: milestone,
-                points: util.getCurrentPoints(issue.title)
+                points: util.getCurrentPoints(issue.title),
+                progress: util.getCurrentProgress(issue.title)
               });
 
               repoData.totals.points += util.getCurrentPoints(issue.title);
+              repoData.totals.progress += util.getCurrentProgress(issue.title);
 
               _.each(labelfilters, function(filter) {
                 if(_.contains(labelNames, filter)) {
@@ -122,10 +125,10 @@ function render(issues) {
     }
 
     var repoTable = new asciitable(repo.name);
-    repoTable.setHeading("Number", "Title", "Labels", "milestone", "Points");
+    repoTable.setHeading("Number", "Title", "Labels", "milestone", "Points", "Progress");
 
     _.each(repo.issues, function(i) {
-      repoTable.addRow(i.number, i.title, i.labels.join(","), i.milestone, i.points);
+      repoTable.addRow(i.number, i.title, i.labels.join(","), i.milestone, i.points, i.progress);
     });
 
     console.log();
