@@ -111,7 +111,50 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
   });
 }
 
-function render(issues) {
+function renderCsv(issues) {
+  console.log();
+
+  if(!issues.totals.total) {
+    console.log("Non found.");
+    return;
+  }
+
+  async.each(issues.repos, function(repo, rcb) {
+    if(!repo.totals.total) {
+      return rcb();
+    }
+
+    console.log(repo.name);
+    var heading = "Number,Title,Labels,Milestone,Points,Progress";
+    console.log(heading);
+
+    _.each(repo.issues, function(i) {
+      var row = [i.number, i.title.replace(/,/g, " "), i.labels.join(" | "), i.milestone.replace(/,/g, " "), i.points, i.progress].join(",");
+      console.log(row);
+    });
+
+    for(var group in repo.totals) {
+      var row = [group, repo.totals[group]].join(",");
+      console.log(row);
+    }
+
+    console.log();
+
+    rcb();
+  }, function() {
+    console.log();
+    console.log();
+
+    console.log('Totals');
+
+    for(var group in issues.totals) {
+      var row = [group, issues.totals[group]].join(",");
+      console.log(row);
+    }
+  });
+}
+
+function renderConsole(issues) {
   console.log();
 
   if(!issues.totals.total) {
@@ -125,7 +168,7 @@ function render(issues) {
     }
 
     var repoTable = new asciitable(repo.name);
-    repoTable.setHeading("Number", "Title", "Labels", "milestone", "Points", "Progress");
+    repoTable.setHeading("Number", "Title", "Labels", "Milestone", "Points", "Progress");
 
     _.each(repo.issues, function(i) {
       repoTable.addRow(i.number, i.title, i.labels.join(","), i.milestone, i.points, i.progress);
@@ -155,6 +198,13 @@ function render(issues) {
   });
 }
 
+function render(cfg, issues) {
+  if(cfg.runner && cfg.runner.toLowerCase() === 'csv') {
+    return renderCsv(issues);
+  }
+  renderConsole(issues);
+}
+
 module.exports = function(cfg) {
 
   if(!cfg || !cfg.org) {
@@ -178,6 +228,6 @@ module.exports = function(cfg) {
   }
 
   getIssues(cfg, repofilters, labelfilters, milestoneFiters, function(err, issues) {
-    render(issues);
+    render(cfg, issues);
   });
 };

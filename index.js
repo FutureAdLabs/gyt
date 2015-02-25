@@ -129,6 +129,10 @@ var args = require("raptor-args").createParser({
   "--state": {
     type: "string",
     description: "GitHub issues state"
+  },
+  "--runner -R": {
+    type: "string",
+    description: "Output render method"
   }
 }).validate(function(result) {
   if (result.help) {
