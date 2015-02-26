@@ -62,17 +62,25 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
                 milestone = issue.milestone.title;
               }
 
+              var points = util.getCurrentPoints(issue.title);
+              var progress = 0;
+              if(issue.state === "closed") {
+                progress = points;
+              } else {
+                progress = util.getCurrentProgress(issue.title);
+              }
+
               repoData.issues.push({
                 number: issue.number,
                 title: util.getNakedTitle(issue.title),
                 labels: _.pluck(issue.labels, "name"),
                 milestone: milestone,
-                points: util.getCurrentPoints(issue.title),
-                progress: util.getCurrentProgress(issue.title)
+                points: points,
+                progress: progress
               });
 
-              repoData.totals.points += util.getCurrentPoints(issue.title);
-              repoData.totals.progress += util.getCurrentProgress(issue.title);
+              repoData.totals.points += points;
+              repoData.totals.progress += progress;
 
               _.each(labelfilters, function(filter) {
                 if(_.contains(labelNames, filter)) {
