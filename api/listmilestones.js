@@ -14,7 +14,7 @@ function getMilestones(cfg, callback) {
     }
 
     async.eachSeries(repos, function(repo, repoCallback) {
-      var url = "api.github.com/repos/" + cfg.org + "/" + repo.name + "/milestones";
+      var url = "api.github.com/repos/" + cfg.org + "/" + repo.name + "/milestones?state=all";
       var req = request.get(cfg, url);
 
       rest(req).then(function(response) {
@@ -22,14 +22,27 @@ function getMilestones(cfg, callback) {
         res = JSON.parse(response.entity);
         if(res.length && !res.message) {
           _.each(res, function(milestone) {
-            milestones.push(milestone.title);
+
+            var due = new Date(milestone.due_on);
+            var now = new Date();
+            var dueInDays = Math.floor((due - now) / (1000*60*60*24)) + 1;
+            if(dueInDays < 0) {
+              dueInDays = 0;
+            }
+
+            milestones.push({
+              name: milestone.title,
+              repo: repo.name,
+              state: milestone.state,
+              due: dueInDays
+            });
           });
         }
         repoCallback();
       });
 
     }, function(err) {
-      callback(err, _.uniq(milestones));
+      callback(err, milestones);
     });
 
   });
@@ -42,8 +55,15 @@ module.exports = function(cfg) {
       return console.error(err);
     }
 
+    console.log();
+
+    var milestoneTable = new asciitable("Milestones");
+    milestoneTable.setHeading("Name", "Repo", "State", "Due in days");
+
     _.each(milestones, function(milestone) {
-      console.log(milestone);
+      milestoneTable.addRow(milestone.name, milestone.repo, milestone.state, milestone.due);
     });
+
+    console.log(milestoneTable.toString());
   });
 };
