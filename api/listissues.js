@@ -66,8 +66,6 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
               var progress = 0;
               if(issue.state === "closed") {
                 progress = points;
-              } else {
-                progress = util.getCurrentProgress(issue.title);
               }
 
               repoData.issues.push({
@@ -176,10 +174,10 @@ function renderConsole(issues) {
     }
 
     var repoTable = new asciitable(repo.name);
-    repoTable.setHeading("Number", "Title", "Labels", "Milestone", "Points", "Progress");
+    repoTable.setHeading("Number", "Title", "Labels", "Milestone", "Points");
 
     _.each(repo.issues, function(i) {
-      repoTable.addRow(i.number, i.title, i.labels.join(","), i.milestone, i.points, i.progress);
+      repoTable.addRow(i.number, i.title, i.labels.join(","), i.milestone, i.points);
     });
 
     console.log();

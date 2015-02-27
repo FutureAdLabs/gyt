@@ -57,14 +57,6 @@ var commands = {
       require("./api/points")(cfg);
     }
   },
-  "setprogress": {
-    description: "Set points progress for an issue",
-    action: function(args) {
-      updateConfig(args, cfg);
-
-      require("./api/progress")(cfg);
-    }
-  },
   "listmilestones": {
     description: "List milestones",
     action: function(args) {

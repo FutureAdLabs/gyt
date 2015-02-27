@@ -1,5 +1,11 @@
-var getPointsSectionIndex = function(title) {
+var getPointsAndProgressSectionIndex = function(title) {
   var re = /\[\d+\/\d+\]/;
+
+  return title.search(re);
+};
+
+var getPointsSectionIndex = function(title) {
+  var re = /\[\d+\]/;
 
   return title.search(re);
 };
@@ -9,7 +15,7 @@ module.exports.getPointsSectionIndex = getPointsSectionIndex;
 
 module.exports.getNakedTitle = function(title) {
 
-  if(getPointsSectionIndex(title) < 0) {
+  if(getPointsSectionIndex(title) < 0 && getPointsAndProgressSectionIndex(title) < 0) {
     return title;
   }
 
@@ -20,14 +26,19 @@ module.exports.getNakedTitle = function(title) {
 };
 
 module.exports.getCurrentPoints = function(title) {
+  var openChar = "";
 
-  if(getPointsSectionIndex(title) < 0) {
+  if(getPointsSectionIndex(title) >= 0) {
+    openChar = "[";
+  } else if(getPointsAndProgressSectionIndex(title) >= 0) {
+    openChar = "/";
+  } else {
     return 0;
   }
 
-  var slashIndex = title.indexOf("/");
+  var openIndex = title.indexOf(openChar);
   var closeIndex = title.indexOf("]");
-  var pointsStr = title.substring(slashIndex + 1, closeIndex);
+  var pointsStr = title.substring(openIndex + 1, closeIndex);
   var points = parseInt(pointsStr);
   if(!points) {
     points = 0;
@@ -37,7 +48,7 @@ module.exports.getCurrentPoints = function(title) {
 
 module.exports.getCurrentProgress = function(title) {
 
-  if(getPointsSectionIndex(title) < 0) {
+  if(getPointsAndProgressSectionIndex(title) < 0) {
     return 0;
   }
 

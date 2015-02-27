@@ -31,8 +31,7 @@ module.exports = function(cfg) {
       return;
     }
 
-    var progress = util.getCurrentProgress(issue.title);
-    var title = "[" + progress + "/" + cfg.points + "] " + util.getNakedTitle(issue.title);
+    var title = "[" + cfg.points + "] " + util.getNakedTitle(issue.title);
     updateTitle(cfg, issue, title);
   });
 };
