@@ -15,11 +15,9 @@ function getMilestones(cfg, callback) {
 
     async.eachSeries(repos, function(repo, repoCallback) {
       var url = "api.github.com/repos/" + cfg.org + "/" + repo.name + "/milestones?state=all";
-      var req = request.get(cfg, url);
 
-      rest(req).then(function(response) {
+      request.getPaginatedResultSet(cfg, url, function(err, res) {
 
-        res = JSON.parse(response.entity);
         if(res.length && !res.message) {
           _.each(res, function(milestone) {
 
