@@ -30,11 +30,9 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
         };
         issues.repos.push(repoData);
 
-        var url = "api.github.com/repos/" + cfg.org + "/" + repo.name + "/issues?state=all&&per_page=100";
-        var req = request.get(cfg, url);
+        var url = "api.github.com/repos/" + cfg.org + "/" + repo.name + "/issues?state=all";
 
-        rest(req).then(function(response) {
-          var res = JSON.parse(response.entity);
+        request.getPaginatedResultSet(cfg, url, function(err, res) {
           async.each(res, function(issue, issueCallback) {
             var labelNames = _.map(issue.labels, function(l) {
               return l.name.toLowerCase().replace(" ", "");
