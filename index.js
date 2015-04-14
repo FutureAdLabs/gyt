@@ -64,6 +64,14 @@ var commands = {
 
       require("./api/listmilestones")(cfg);
     }
+  },
+  "moveon": {
+    description: "Move issue on to next stage",
+    action: function(args) {
+      updateConfig(args, cfg);
+
+      require("./api/moveon.js")(cfg);
+    }
   }
 };
 
@@ -125,6 +133,10 @@ var args = require("raptor-args").createParser({
   "--runner -R": {
     type: "string",
     description: "Output render method"
+  },
+  "--debug -d": {
+    type: "boolean",
+    description: "Output debug"
   }
 }).validate(function(result) {
   if (result.help) {
