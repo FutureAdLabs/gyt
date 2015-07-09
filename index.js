@@ -41,6 +41,14 @@ var commands = {
       require("./api/repos").list(cfg);
     }
   },
+  "smt-report": {
+    description: "Generate SMT report",
+    action: function(args) {
+      updateConfig(args, cfg);
+
+      require("./api/smt-report")(cfg);
+    }
+  },
   "listissues": {
     description: "List issues",
     action: function(args) {
