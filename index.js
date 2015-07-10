@@ -41,7 +41,7 @@ var commands = {
       require("./api/repos").list(cfg);
     }
   },
-  "smt-report": {
+  "report": {
     description: "Generate SMT report",
     action: function(args) {
       updateConfig(args, cfg);
@@ -71,6 +71,22 @@ var commands = {
       updateConfig(args, cfg);
 
       require("./api/listmilestones")(cfg);
+    }
+  },
+  "addmilestone": {
+    description: "Create new milestone on each org repo",
+    action: function(args) {
+      updateConfig(args, cfg);
+
+      require("./api/addmilestone")(cfg);
+    }
+  },
+  "delmilestone": {
+    description: "Dekete existing milestone on each org repo matching the title",
+    action: function(args) {
+      updateConfig(args, cfg);
+
+      require("./api/deleteMilestone")(cfg);
     }
   },
   "moveon": {
@@ -145,6 +161,26 @@ var args = require("raptor-args").createParser({
   "--debug -d": {
     type: "boolean",
     description: "Output debug"
+  },
+  "--description": {
+    type: "string",
+    description: "Milestone description"
+  },
+  "--dueon": {
+    type: "date",
+    description: "Milestone Due Date"
+  },
+  "--user": {
+    type: "string",
+    description: "Filter issues based on who created the task"
+  },
+  "--assignee": {
+    type: "string",
+    description: "Filter issues based on assignee"
+  },
+  "--nopoints": {
+    type: "string",
+    description: "Filter issues that have not been assigned an estimation"
   }
 }).validate(function(result) {
   if (result.help) {

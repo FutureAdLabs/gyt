@@ -6,7 +6,7 @@ var request = require("./request");
 var repositories = require("./repos");
 var util = require("./util");
 
-function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
+function getIssues(cfg, repofilters, labelfilters, milestoneFiters, creatorFilter, assigneeFilter, nopointsFilter, callback) {
   var issues = {
     repos: [],
     totals: {}
@@ -51,9 +51,12 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
             }
 
             if((!labelfilters.length || _.some(labelfilters, function(filter) {
-              return _.contains(labelNames, filter);
-            })) && (!milestoneFiters.length || (issue.milestone && _.contains(milestoneFiters, issue.milestone.title.toLowerCase()))
-                   )  && (!cfg.state || cfg.state === issue.state)) {
+                  return _.contains(labelNames, filter);
+                })) &&
+                (!milestoneFiters.length || (issue.milestone && _.contains(milestoneFiters, issue.milestone.title.toLowerCase())))  &&
+                (!cfg.state || cfg.state === issue.state) &&
+                (!creatorFilter || (creatorFilter === issue.user.login)) &&
+                (!assigneeFilter || (issue.assignee && assigneeFilter === issue.assignee.login))) {
 
               var milestone = "";
               if(issue.milestone) {
@@ -61,6 +64,12 @@ function getIssues(cfg, repofilters, labelfilters, milestoneFiters, callback) {
               }
 
               var points = util.getCurrentPoints(issue.title);
+              
+              if(nopointsFilter && points !== 0){
+                //only return when points === 0
+                return issueCallback();
+              }
+
               var progress = 0;
               if(issue.state === "closed") {
                 progress = points;
@@ -231,7 +240,21 @@ module.exports = function(cfg) {
     milestoneFiters = cfg.milestone.toLowerCase().split(",");
   }
 
-  getIssues(cfg, repofilters, labelfilters, milestoneFiters, function(err, issues) {
+  var creatorFilter = false;
+  if(cfg && cfg.user) {
+    creatorFilter = cfg.user;
+  }  
+  var assigneeFilter = false;
+  if(cfg && cfg.assignee) {
+    assigneeFilter = cfg.assignee;
+  }  
+
+  var nopointsFilter = false;
+  if(cfg && cfg.nopoints) {
+    nopointsFilter = cfg.nopoints;
+  }  
+
+  getIssues(cfg, repofilters, labelfilters, milestoneFiters, creatorFilter, assigneeFilter, nopointsFilter, function(err, issues) {
     render(cfg, issues);
   });
 };

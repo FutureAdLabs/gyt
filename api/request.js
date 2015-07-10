@@ -7,6 +7,52 @@ function stripProtocol(req) {
   }
 }
 
+var rdelete = function(cfg, url){
+  return rest({
+    method: "DELETE",
+    path: url,
+    headers: {
+      "User-Agent":"Adludio Gyt",
+      "Authorization": "token " + cfg.token
+    }
+  }).then(function(response) {
+    if (response.status.code === 204) {
+      return true;
+    } else {
+      throw response.entity;
+    }
+  }).catch(function(error) {
+    throw error;
+  });
+};
+module.exports.rdelete = rdelete;
+
+
+
+
+var post = function(cfg, url, data){
+
+  return rest({
+    method: "POST",
+    path: url,
+    entity: JSON.stringify(data),
+    headers: {
+      "User-Agent":"Adludio Gyt",
+      "Authorization": "token " + cfg.token
+    }
+  }).then(function(response) {
+    if (response.status.code >= 200 && response.status.code < 300) {
+      return JSON.parse(response.entity);
+    } else {
+      throw response.entity;
+    }
+  }).catch(function(error) {
+    throw error;
+  });
+
+};
+module.exports.post = post;
+
 
 var get = function(cfg, properties) {
   var req = {};
