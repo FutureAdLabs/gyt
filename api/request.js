@@ -28,6 +28,28 @@ var rdelete = function(cfg, url){
 module.exports.rdelete = rdelete;
 
 
+var patch = function(cfg, url, data){
+
+  return rest({
+    method: "PATCH",
+    path: url,
+    entity: JSON.stringify(data),
+    headers: {
+      "User-Agent":"Adludio Gyt",
+      "Authorization": "token " + cfg.token
+    }
+  }).then(function(response) {
+    if (response.status.code >= 200 && response.status.code < 300) {
+      return JSON.parse(response.entity);
+    } else {
+      throw response.entity;
+    }
+  }).catch(function(error) {
+    throw error;
+  });
+
+};
+module.exports.patch = patch;
 
 
 var post = function(cfg, url, data){

@@ -81,6 +81,13 @@ var commands = {
       require("./api/addmilestone")(cfg);
     }
   },
+  "closemilestone": {
+    description: "Close existing milestone on each org repo",
+    action: function(args) {
+      updateConfig(args, cfg);
+      require("./api/closemilestone")(cfg);
+    }
+  },
   "delmilestone": {
     description: "Dekete existing milestone on each org repo matching the title",
     action: function(args) {
